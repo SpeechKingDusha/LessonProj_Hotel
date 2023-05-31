@@ -1,4 +1,6 @@
-package org.example;
+package org.Amdocs;
+
+import org.Amdocs.repository.DBRep;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -7,22 +9,24 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.List;
 
 class HotelBookingSystem extends JFrame {
 
-    Connection conn;
-    JTable table;
-    Box contents = new Box(BoxLayout.Y_AXIS);
-    JTextField empId, empName, department, salary, dtJoin, emailId;
+    private final Connection conn = DBRep.conn;
+    private JTable table;
+    private Box contents = new Box(BoxLayout.Y_AXIS);
+    private JTextField empId, empName, department, salary, dtJoin, emailId;
     // Column name
     private final static String[] COLUMNS = {"ID", "GuestName", "ContactNo", "Room", "Check_in", "Check_out", "EMailID"};
+    private final static String[] ROOMS = {"Simple", "Deluxe", "SuperDeluxe"};
 
     public HotelBookingSystem() {
-        conn = getConnection();
+        DBRep.getConnection();
+
+        //conn = getConnection();
         table = new JTable();
-        List<PeopleInfo> rawData = getRawDataFromDB(conn);
+        List<PeopleInfo> rawData = DBRep.getRawDataFromDB(COLUMNS);
         DefaultTableModel model = getModel(rawData);
         drawTable(model);
         drawComponents();
@@ -31,7 +35,7 @@ class HotelBookingSystem extends JFrame {
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 try {
-                    conn.close();
+                    DBRep.conn.close();
                     System.out.println("Connection to SQLite has been closed.");
                 } catch (SQLException sqle) {
                     System.out.println(sqle.getMessage());
@@ -42,7 +46,7 @@ class HotelBookingSystem extends JFrame {
     }
 
     private void refreshData() {
-        List<PeopleInfo> rawData = getRawDataFromDB(conn);
+        List<PeopleInfo> rawData = DBRep.getRawDataFromDB(COLUMNS);
         DefaultTableModel model = getModel(rawData);
         table.setModel(model);
     }
@@ -57,7 +61,7 @@ class HotelBookingSystem extends JFrame {
                 String[] rooms = {"Simple", "Deluxe", "SuperDeluxe"};
                 JTextField guestName = new JTextField();
                 JTextField contact = new JTextField();
-                JComboBox room = new JComboBox<>(rooms);
+                JComboBox room = new JComboBox<>(ROOMS);
                 JTextField checkIn = new JTextField();
                 JTextField checkOut = new JTextField();
                 JTextField emailId = new JTextField();
@@ -76,25 +80,19 @@ class HotelBookingSystem extends JFrame {
                         emailId,
                 };
 
+
                 int result = JOptionPane.showConfirmDialog(null, inputs, "Do you want add new guest?", JOptionPane.PLAIN_MESSAGE);
                 if (result == JOptionPane.OK_OPTION) {
-                    try {
-                        String sql = "INSERT INTO HotelTable values(?,?,?,?,?,?,?)";
-                        PreparedStatement ps = conn.prepareStatement(sql);
-                        //ps.setString(1, empId.getText());
-                        ps.setString(2, guestName.getText());
-                        ps.setString(3, contact.getText());
-                        ps.setString(4, (String) (room.getSelectedItem()));
-                        ps.setString(5, checkIn.getText());
-                        ps.setString(6, checkOut.getText());
-                        ps.setString(7, emailId.getText());
-                        //This method is when update/insert/delete any row
-                        ps.executeUpdate();
-                        System.out.println("Item created successfully");
+                    PeopleInfo people = new PeopleInfo();
+                    people.setGuestName(guestName.getText());
+                    people.setContactNo(contact.getText());
+                    people.setRoom((String) (room.getSelectedItem()));
+                    people.setCheckIn(checkIn.getText());
+                    people.setCheckOut(checkOut.getText());
+                    people.setEmailID(emailId.getText());
 
-                    } catch (SQLException ex) {
-                        System.out.println(ex.getMessage());
-                    }
+                    DBRep.insert(people);
+
                 } else {
                     System.out.println("User canceled / closed the dialog, result = " + result);
                 }
@@ -116,25 +114,25 @@ class HotelBookingSystem extends JFrame {
                     String checkOutValue = (String) (table.getValueAt(table.getSelectedRow(), 5));
                     String emailIdValue = (String) (table.getValueAt(table.getSelectedRow(), 6));
 
-                    String[] rooms = {"Simple", "Deluxe", "SuperDeluxe"};
                     JTextField guestName = new JTextField();
                     JTextField contact = new JTextField();
-                    JComboBox room = new JComboBox<>(rooms);
+                    JComboBox room = new JComboBox<>(ROOMS);
                     JTextField checkIn = new JTextField();
                     JTextField checkOut = new JTextField();
                     JTextField emailId = new JTextField();
+
                     final JComponent[] inputs = new JComponent[]{
-                            new JLabel("guestName"),
+                            new JLabel(COLUMNS[1]),
                             guestName,
-                            new JLabel("contactNo"),
+                            new JLabel(COLUMNS[2]),
                             contact,
-                            new JLabel("room"),
+                            new JLabel(COLUMNS[3]),
                             room,
-                            new JLabel("checkIn"),
+                            new JLabel(COLUMNS[4]),
                             checkIn,
-                            new JLabel("checkOut"),
+                            new JLabel(COLUMNS[5]),
                             checkOut,
-                            new JLabel("emailId"),
+                            new JLabel(COLUMNS[6]),
                             emailId,
                     };
                     guestName.setText(guestNameValue);
@@ -146,24 +144,18 @@ class HotelBookingSystem extends JFrame {
 
                     int result = JOptionPane.showConfirmDialog(null, inputs, "Update dialog", JOptionPane.PLAIN_MESSAGE);
                     if (result == JOptionPane.OK_OPTION) {
-                        try {
-                            String sql = "UPDATE HotelTable SET GuestName = ?, Contact = ?, Room = ?, Check_in = ?, Check_out = ?, EMailID = ? WHERE Id = ?";
-                            PreparedStatement ps = conn.prepareStatement(sql);
-                            ps.setString(1, guestName.getText());
-                            ps.setString(2, contact.getText());
-                            ps.setString(3, (String) (room.getSelectedItem()));
-                            ps.setString(4, checkIn.getText());
-                            ps.setString(5, checkOut.getText());
-                            ps.setString(6, emailId.getText());
-                            ps.setInt(7, guestIdValue);
 
-                            //This method is when update/insert/delete any row
-                            ps.executeUpdate();
-                            System.out.println("Item updated successfully");
+                        PeopleInfo people = new PeopleInfo();
+                        people.setGuestName(guestName.getText());
+                        people.setContactNo(contact.getText());
+                        people.setRoom((String) (room.getSelectedItem()));
+                        people.setCheckIn(checkIn.getText());
+                        people.setCheckOut(checkOut.getText());
+                        people.setEmailID(emailId.getText());
+                        people.setGuestId(guestIdValue);
 
-                        } catch (SQLException ex) {
-                            System.out.println(ex.getMessage());
-                        }
+                        DBRep.update(people);
+
                     } else {
                         System.out.println("User canceled / closed the dialog, result = " + result);
                     }
@@ -184,17 +176,10 @@ class HotelBookingSystem extends JFrame {
                     System.out.println(guestId);
                     int result = JOptionPane.showConfirmDialog(null, "Do you want delete guest with id: " + guestId + " ?", "Delete guest", JOptionPane.PLAIN_MESSAGE);
                     if (result == JOptionPane.OK_OPTION) {
-                        try {
-                            String sql = "DELETE FROM HotelTable WHERE Id=?";
-                            PreparedStatement ps = conn.prepareStatement(sql);
-                            ps.setInt(1, guestId);
-                            ps.executeUpdate();
-                            System.out.println("Item deleted successfully");
 
-                            refreshData();
-                        } catch (SQLException ex) {
-                            System.out.println(ex.getMessage());
-                        }
+                        DBRep.delete(guestId);
+                        System.out.println("Item deleted successfully");
+                        refreshData();
                     } else {
                         System.out.println("User canceled / closed the dialog, result = " + result);
                     }
@@ -234,46 +219,4 @@ class HotelBookingSystem extends JFrame {
         return model;
     }
 
-    private List<PeopleInfo> getRawDataFromDB(Connection conn) {
-        List<PeopleInfo> rawData = new ArrayList<>();
-        try {
-            Statement stmt = conn.createStatement();
-
-            //DriverManager is checking the accessibility to DB
-            String sql = "SELECT * FROM HotelTable ORDER BY Id DESC";
-            ResultSet rs = stmt.executeQuery(sql);
-            while (rs.next()) {
-                PeopleInfo people = new PeopleInfo();
-
-                people.setGuestId(rs.getInt("Id"));
-                people.setGuestName(rs.getString("GuestName"));
-                people.setContactNo(rs.getString("Contact"));
-                people.setRoom(rs.getString("Room"));
-                people.setCheckIn(rs.getString("Check_in"));
-                people.setCheckOut(rs.getString("Check_out"));
-                people.setEmailID(rs.getString("EMailID"));
-
-                rawData.add(people);
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        return rawData;
-    }
-
-    private Connection getConnection() {
-        Connection conn = null; //same
-        try {
-            // db parameters
-            String url = "jdbc:sqlite:.\\src\\main\\java\\org\\example\\sqlite.db"; //same
-            // create a connection to the database
-            conn = DriverManager.getConnection(url); //same
-
-            System.out.println("Connection to SQLite has been established.");
-
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        return conn;
-    }
 }

@@ -1,4 +1,4 @@
-package org.example;
+package org.Amdocs;
 
 public class PeopleInfo {
     private Integer id;
