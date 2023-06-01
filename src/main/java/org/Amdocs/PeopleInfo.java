@@ -8,6 +8,7 @@ public class PeopleInfo {
     private String checkIn;
     private String checkOut;
     private String emailID;
+    private Integer sumGuests;
 
     public Integer getId() {
         return id;
@@ -75,6 +76,15 @@ public class PeopleInfo {
                 ", checkIn='" + checkIn + '\'' +
                 ", checkOut='" + checkOut + '\'' +
                 ", emailID='" + emailID + '\'' +
+                ", sumGuests='" + sumGuests + '\'' +
                 '}';
+    }
+
+    public Integer getSumGuests() {
+        return sumGuests;
+    }
+
+    public void setSumGuests(Integer sumGuests) {
+        this.sumGuests = sumGuests;
     }
 }

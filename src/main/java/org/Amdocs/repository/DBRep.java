@@ -37,7 +37,7 @@ public class DBRep {
     }
 
     public static void insert(PeopleInfo people) {
-        String sql = "INSERT INTO HotelTable values(?,?,?,?,?,?,?)";
+        String sql = "INSERT INTO HotelTable values(?,?,?,?,?,?,?,?)";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             //ps.setString(1, empId.getText());
@@ -47,6 +47,7 @@ public class DBRep {
             ps.setString(5, people.getCheckIn());
             ps.setString(6, people.getCheckOut());
             ps.setString(7, people.getEmailID());
+            ps.setInt (8, people.getSumGuests());
             //This method is when update/insert/delete any row
             ps.executeUpdate();
         } catch (SQLException ex) {
@@ -55,7 +56,7 @@ public class DBRep {
     }
 
     public static void update(PeopleInfo people) {
-        String sql = "UPDATE HotelTable SET GuestName = ?, ContactNo = ?, Room = ?, Check_in = ?, Check_out = ?, EMailID = ? WHERE Id = ?";
+        String sql = "UPDATE HotelTable SET GuestName = ?, ContactNo = ?, Room = ?, Check_in = ?, Check_out = ?, EMailID = ?, SumGuests = ? WHERE Id = ?";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
 
@@ -65,7 +66,8 @@ public class DBRep {
             ps.setString(4, people.getCheckIn());
             ps.setString(5, people.getCheckOut());
             ps.setString(6, people.getEmailID());
-            ps.setInt(7, people.getId());
+            ps.setInt(7, people.getSumGuests());
+            ps.setInt(8, people.getId());
             //This method is when update/insert/delete any row
             ps.executeUpdate();
         } catch (SQLException ex) {
@@ -97,7 +99,7 @@ public class DBRep {
                 people.setCheckIn(peoples.getString(COLUMNS[4]));
                 people.setCheckOut(peoples.getString(COLUMNS[5]));
                 people.setEmailID(peoples.getString(COLUMNS[6]));
-
+                people.setSumGuests(peoples.getInt (COLUMNS[7]));
                 rawData.add(people);
             }
         } catch (SQLException e) {

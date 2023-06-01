@@ -18,7 +18,7 @@ class HotelBookingSystem extends JFrame {
     private Box contents = new Box(BoxLayout.Y_AXIS);
     private JTextField empId, empName, department, salary, dtJoin, emailId;
     // Column name
-    private final static String[] COLUMNS = {"ID", "GuestName", "ContactNo", "Room", "Check_in", "Check_out", "EMailID"};
+    private final static String[] COLUMNS = {"ID", "GuestName", "ContactNo", "Room", "Check_in", "Check_out", "EMailID", "SumGuests"};
     private final static String[] ROOMS = {"Simple", "Deluxe", "SuperDeluxe"};
 
     public HotelBookingSystem() {
@@ -65,6 +65,7 @@ class HotelBookingSystem extends JFrame {
                 JTextField checkIn = new JTextField();
                 JTextField checkOut = new JTextField();
                 JTextField emailId = new JTextField();
+                JTextField sumGuests = new JTextField();
                 final JComponent[] inputs = new JComponent[]{
                         new JLabel(COLUMNS[1]),
                         guestName,
@@ -78,6 +79,8 @@ class HotelBookingSystem extends JFrame {
                         checkOut,
                         new JLabel(COLUMNS[6]),
                         emailId,
+                        new JLabel(COLUMNS[7]),
+                        sumGuests
                 };
 
 
@@ -90,6 +93,7 @@ class HotelBookingSystem extends JFrame {
                     people.setCheckIn(checkIn.getText());
                     people.setCheckOut(checkOut.getText());
                     people.setEmailID(emailId.getText());
+                    people.setSumGuests(Integer.parseInt(sumGuests.getText()));
 
                     DBRep.insert(people);
 
@@ -113,6 +117,7 @@ class HotelBookingSystem extends JFrame {
                     String checkInValue = (String) (table.getValueAt(table.getSelectedRow(), 4));
                     String checkOutValue = (String) (table.getValueAt(table.getSelectedRow(), 5));
                     String emailIdValue = (String) (table.getValueAt(table.getSelectedRow(), 6));
+                    Integer sumGuestsValue = (Integer) (table.getValueAt(table.getSelectedRow(), 7));
 
                     JTextField guestName = new JTextField();
                     JTextField contact = new JTextField();
@@ -120,6 +125,7 @@ class HotelBookingSystem extends JFrame {
                     JTextField checkIn = new JTextField();
                     JTextField checkOut = new JTextField();
                     JTextField emailId = new JTextField();
+                    JTextField sumGuests = new JTextField();
 
                     final JComponent[] inputs = new JComponent[]{
                             new JLabel(COLUMNS[1]),
@@ -134,6 +140,8 @@ class HotelBookingSystem extends JFrame {
                             checkOut,
                             new JLabel(COLUMNS[6]),
                             emailId,
+                            new JLabel(COLUMNS[7]),
+                            sumGuests
                     };
                     guestName.setText(guestNameValue);
                     contact.setText(guestNoValue);
@@ -141,6 +149,7 @@ class HotelBookingSystem extends JFrame {
                     checkIn.setText(checkInValue);
                     checkOut.setText(checkOutValue);
                     emailId.setText(emailIdValue);
+                    sumGuests.setText(sumGuestsValue.toString());
 
                     int result = JOptionPane.showConfirmDialog(null, inputs, "Update dialog", JOptionPane.PLAIN_MESSAGE);
                     if (result == JOptionPane.OK_OPTION) {
@@ -152,6 +161,7 @@ class HotelBookingSystem extends JFrame {
                         people.setCheckIn(checkIn.getText());
                         people.setCheckOut(checkOut.getText());
                         people.setEmailID(emailId.getText());
+                        people.setSumGuests(Integer.parseInt(sumGuests.getText()));
                         people.setGuestId(guestIdValue);
 
                         DBRep.update(people);
@@ -206,15 +216,16 @@ class HotelBookingSystem extends JFrame {
         DefaultTableModel model = new DefaultTableModel();
         model.setColumnIdentifiers(COLUMNS);
         for (PeopleInfo people : rawData) {
-            Object[] item = new Object[7];
-            item[0] = people.getId();
-            item[1] = people.getGuestName();
-            item[2] = people.getContactNo();
-            item[3] = people.getRoom();
-            item[4] = people.getCheckIn();
-            item[5] = people.getCheckOut();
-            item[6] = people.getEmailID();
-            model.addRow(item);
+            Object[] items = new Object[8];
+            items[0] = people.getId();
+            items[1] = people.getGuestName();
+            items[2] = people.getContactNo();
+            items[3] = people.getRoom();
+            items[4] = people.getCheckIn();
+            items[5] = people.getCheckOut();
+            items[6] = people.getEmailID();
+            items[7] = people.getSumGuests();
+            model.addRow(items);
         }
         return model;
     }
