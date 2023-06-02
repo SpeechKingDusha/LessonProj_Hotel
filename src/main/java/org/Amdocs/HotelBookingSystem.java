@@ -4,6 +4,7 @@ import org.Amdocs.repository.DBRep;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -13,7 +14,7 @@ import java.util.List;
 
 class HotelBookingSystem extends JFrame {
 
-    private final Connection conn = DBRep.conn;
+    //private final Connection conn = DBRep.conn;
     private JTable table;
     private Box contents = new Box(BoxLayout.Y_AXIS);
     private JTextField empId, empName, department, salary, dtJoin, emailId;
@@ -151,23 +152,46 @@ class HotelBookingSystem extends JFrame {
                     emailId.setText(emailIdValue);
                     sumGuests.setText(sumGuestsValue.toString());
 
-                    int result = JOptionPane.showConfirmDialog(null, inputs, "Update dialog", JOptionPane.PLAIN_MESSAGE);
-                    if (result == JOptionPane.OK_OPTION) {
+                    Validator validator = new Validator();
+                    PeopleInfo people = new PeopleInfo();
+                    while (validator == null || !validator.isGood()) {
+                        int result = JOptionPane.showConfirmDialog(HotelBookingSystem.this, inputs, "Update dialog", JOptionPane.PLAIN_MESSAGE);
+                        if (result == JOptionPane.OK_OPTION) {
 
-                        PeopleInfo people = new PeopleInfo();
-                        people.setGuestName(guestName.getText());
-                        people.setContactNo(contact.getText());
-                        people.setRoom((String) (room.getSelectedItem()));
-                        people.setCheckIn(checkIn.getText());
-                        people.setCheckOut(checkOut.getText());
-                        people.setEmailID(emailId.getText());
-                        people.setSumGuests(Integer.parseInt(sumGuests.getText()));
-                        people.setGuestId(guestIdValue);
+                            people.setGuestName(guestName.getText());
+                            people.setContactNo(contact.getText());
+                            people.setRoom((String) (room.getSelectedItem()));
+                            people.setCheckIn(checkIn.getText());
+                            people.setCheckOut(checkOut.getText());
+                            people.setEmailID(emailId.getText());
+                            people.setSumGuests(Integer.parseInt(sumGuests.getText()));
+                            people.setGuestId(guestIdValue);
 
-                        DBRep.update(people);
+                            validator = Validator.validate(people, COLUMNS);
+                            if (validator.getEmptyFields().size()>0){
+                                if (validator.getEmptyFields().contains(COLUMNS[1])){
+                                    guestName.setBackground(Color.ORANGE);
+                                }
+                                else guestName.setBackground(Color.white);
+                                if (validator.getEmptyFields().contains(COLUMNS[2])){
+                                    contact.setBackground(Color.ORANGE);
+                                }
+                                else contact.setBackground(Color.white);
+                                if (validator.getEmptyFields().contains(COLUMNS[6])){
+                                    emailId.setBackground(Color.ORANGE);
+                                }
+                                else emailId.setBackground(Color.white);
+                                if (validator.getEmptyFields().contains(COLUMNS[7])){
+                                    sumGuests.setBackground(Color.ORANGE);
+                                }
+                                else sumGuests.setBackground(Color.white);
+                                JOptionPane.showMessageDialog(HotelBookingSystem.this, validator.getMessage(), "Fields check", JOptionPane.WARNING_MESSAGE);
+                            }
+                            DBRep.update(people);
 
-                    } else {
-                        System.out.println("User canceled / closed the dialog, result = " + result);
+                        } else {
+                            System.out.println("User canceled / closed the dialog, result = " + result);
+                        }
                     }
                     refreshData();
                 } else {
