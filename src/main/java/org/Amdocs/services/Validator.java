@@ -1,4 +1,6 @@
-package org.Amdocs;
+package org.Amdocs.services;
+
+import org.Amdocs.models.PeopleInfo;
 
 import java.util.ArrayList;
 

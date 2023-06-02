@@ -1,4 +1,4 @@
-package org.Amdocs;
+package org.Amdocs.models;
 
 public class PeopleInfo {
     private Integer id;

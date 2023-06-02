@@ -1,6 +1,8 @@
-package org.Amdocs;
+package org.Amdocs.views;
 
+import org.Amdocs.models.PeopleInfo;
 import org.Amdocs.repository.DBRep;
+import org.Amdocs.services.Validator;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -12,7 +14,7 @@ import java.awt.event.WindowEvent;
 import java.sql.*;
 import java.util.List;
 
-class HotelBookingSystem extends JFrame {
+public class HotelBookingSystem extends JFrame {
 
     private JTable table;
     private Box contents = new Box(BoxLayout.Y_AXIS);

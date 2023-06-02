@@ -1,6 +1,6 @@
 package org.Amdocs.repository;
 
-import org.Amdocs.PeopleInfo;
+import org.Amdocs.models.PeopleInfo;
 
 import java.sql.*;
 import java.util.ArrayList;
