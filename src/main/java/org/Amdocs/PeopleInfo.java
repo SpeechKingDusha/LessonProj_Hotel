@@ -4,11 +4,11 @@ public class PeopleInfo {
     private Integer id;
     private String guestName;
     private String contactNo;
-    private String room;
+    private String room="Simple";
     private String checkIn;
     private String checkOut;
     private String emailID;
-    private Integer sumGuests;
+    private Integer sumGuests=1;
 
     public Integer getId() {
         return id;

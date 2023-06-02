@@ -4,8 +4,10 @@ import java.util.ArrayList;
 
 public class Validator {
 
+    private static final String REGEXPHONENUMBER = "^((8|\\+7)[\\- ]?)?(\\(?\\d{3}\\)?[\\- ]?)?[\\d\\- ]{7}$";
+    private static final String REGEXEMAIL = "\\A[^@]+@([^@\\.]+\\.)+[^@\\.]+\\z";
     private boolean isGood;
-    private ArrayList<String> emptyFields;
+    private ArrayList<String> brokenFields;
     private String message;
 
     public boolean isGood() {
@@ -16,12 +18,12 @@ public class Validator {
         isGood = good;
     }
 
-    public ArrayList<String>  getEmptyFields() {
-        return emptyFields;
+    public ArrayList<String> getBrokenFields() {
+        return brokenFields;
     }
 
-    public void setEmptyFields(ArrayList<String>  emptyFields) {
-        this.emptyFields = emptyFields;
+    public void setBrokenFields(ArrayList<String> brokenFields) {
+        this.brokenFields = brokenFields;
     }
 
     public String getMessage() {
@@ -34,32 +36,43 @@ public class Validator {
 
     public static Validator validate(PeopleInfo people, String[] columnsName){
         Validator validator = new Validator();
-        validator.emptyFields = new ArrayList<>();
+        validator.brokenFields = new ArrayList<>();
         StringBuilder message = new StringBuilder();
         validator.isGood=true;
         if (people.getGuestName().isEmpty()){
             validator.isGood=false;
-            validator.emptyFields.add(columnsName[1]);
+            validator.brokenFields.add(columnsName[1]);
         }
         if (people.getContactNo().isEmpty()){
             validator.isGood=false;
-            validator.emptyFields.add(columnsName[2]);
+            validator.brokenFields.add(columnsName[2]);
         }
+        else if (!people.getContactNo().matches(REGEXPHONENUMBER)){
+               validator.isGood=false;
+               validator.brokenFields.add(columnsName[2]);
+               message.append("Contact number must contain only number. Example: +79991118866 \n");
+            };
+
         if (people.getEmailID().isEmpty()){
             validator.isGood=false;
-            validator.emptyFields.add(columnsName[6]);
+            validator.brokenFields.add(columnsName[6]);
         }
-        if (people.getSumGuests() < 1){
+        else if (!people.getEmailID().matches(REGEXEMAIL)){
+            validator.isGood=false;
+            validator.brokenFields.add(columnsName[6]);
+            message.append("Email is not correct. Example: andreysp@amdocs.com \n");
+        }
+        if (people.getSumGuests() == null || people.getSumGuests() < 1 ){
             validator.isGood=false;
             message.append("SumGuests field must be > 0. \n");
-            validator.emptyFields.add(columnsName[7]);
+            validator.brokenFields.add(columnsName[7]);
         }
-        if (validator.emptyFields.size() > 0){
+        if (validator.brokenFields.size() > 0){
             int i = 0;
-            message.append("This fields are empty:\n");
-            for (String empty: validator.emptyFields){
+            message.append("These fields are empty or incorrect:\n");
+            for (String empty: validator.brokenFields){
                 i++;
-                message.append(i +".)" + empty+"\n");
+                message.append(i +".) " + empty+"\n");
             }
         }
         validator.message = message.toString();

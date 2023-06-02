@@ -14,18 +14,14 @@ import java.util.List;
 
 class HotelBookingSystem extends JFrame {
 
-    //private final Connection conn = DBRep.conn;
     private JTable table;
     private Box contents = new Box(BoxLayout.Y_AXIS);
-    private JTextField empId, empName, department, salary, dtJoin, emailId;
-    // Column name
     private final static String[] COLUMNS = {"ID", "GuestName", "ContactNo", "Room", "Check_in", "Check_out", "EMailID", "SumGuests"};
     private final static String[] ROOMS = {"Simple", "Deluxe", "SuperDeluxe"};
 
     public HotelBookingSystem() {
         DBRep.getConnection();
 
-        //conn = getConnection();
         table = new JTable();
         List<PeopleInfo> rawData = DBRep.getRawDataFromDB(COLUMNS);
         DefaultTableModel model = getModel(rawData);
@@ -59,49 +55,8 @@ class HotelBookingSystem extends JFrame {
         newModalButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String[] rooms = {"Simple", "Deluxe", "SuperDeluxe"};
-                JTextField guestName = new JTextField();
-                JTextField contact = new JTextField();
-                JComboBox room = new JComboBox<>(ROOMS);
-                JTextField checkIn = new JTextField();
-                JTextField checkOut = new JTextField();
-                JTextField emailId = new JTextField();
-                JTextField sumGuests = new JTextField();
-                final JComponent[] inputs = new JComponent[]{
-                        new JLabel(COLUMNS[1]),
-                        guestName,
-                        new JLabel(COLUMNS[2]),
-                        contact,
-                        new JLabel(COLUMNS[3]),
-                        room,
-                        new JLabel(COLUMNS[4]),
-                        checkIn,
-                        new JLabel(COLUMNS[5]),
-                        checkOut,
-                        new JLabel(COLUMNS[6]),
-                        emailId,
-                        new JLabel(COLUMNS[7]),
-                        sumGuests
-                };
-
-
-                int result = JOptionPane.showConfirmDialog(null, inputs, "Do you want add new guest?", JOptionPane.PLAIN_MESSAGE);
-                if (result == JOptionPane.OK_OPTION) {
-                    PeopleInfo people = new PeopleInfo();
-                    people.setGuestName(guestName.getText());
-                    people.setContactNo(contact.getText());
-                    people.setRoom((String) (room.getSelectedItem()));
-                    people.setCheckIn(checkIn.getText());
-                    people.setCheckOut(checkOut.getText());
-                    people.setEmailID(emailId.getText());
-                    people.setSumGuests(Integer.parseInt(sumGuests.getText()));
-
-                    DBRep.insert(people);
-
-                } else {
-                    System.out.println("User canceled / closed the dialog, result = " + result);
-                }
-                refreshData();
+                PeopleInfo newPeople = new PeopleInfo();
+                drawEditeForm(newPeople);
             }
         });
         contentsButton.add(newModalButton);
@@ -111,89 +66,19 @@ class HotelBookingSystem extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (table.getSelectedRow() > -1) {
-                    Integer guestIdValue = (Integer) (table.getValueAt(table.getSelectedRow(), 0));
-                    String guestNameValue = (String) (table.getValueAt(table.getSelectedRow(), 1));
-                    String guestNoValue = (String) (table.getValueAt(table.getSelectedRow(), 2));
-                    String roomValue = (String) (table.getValueAt(table.getSelectedRow(), 3));
-                    String checkInValue = (String) (table.getValueAt(table.getSelectedRow(), 4));
-                    String checkOutValue = (String) (table.getValueAt(table.getSelectedRow(), 5));
-                    String emailIdValue = (String) (table.getValueAt(table.getSelectedRow(), 6));
-                    Integer sumGuestsValue = (Integer) (table.getValueAt(table.getSelectedRow(), 7));
+                    PeopleInfo selectedPeople = new PeopleInfo();
 
-                    JTextField guestName = new JTextField();
-                    JTextField contact = new JTextField();
-                    JComboBox room = new JComboBox<>(ROOMS);
-                    JTextField checkIn = new JTextField();
-                    JTextField checkOut = new JTextField();
-                    JTextField emailId = new JTextField();
-                    JTextField sumGuests = new JTextField();
+                    selectedPeople.setGuestId((Integer) (table.getValueAt(table.getSelectedRow(), 0)));
+                    selectedPeople.setGuestName((String) (table.getValueAt(table.getSelectedRow(), 1)));
+                    selectedPeople.setContactNo((String) (table.getValueAt(table.getSelectedRow(), 2)));
+                    selectedPeople.setRoom((String) (table.getValueAt(table.getSelectedRow(), 3)));
+                    selectedPeople.setCheckIn((String) (table.getValueAt(table.getSelectedRow(), 4)));
+                    selectedPeople.setCheckOut((String) (table.getValueAt(table.getSelectedRow(), 5)));
+                    selectedPeople.setEmailID((String) (table.getValueAt(table.getSelectedRow(), 6)));
+                    selectedPeople.setSumGuests((Integer) (table.getValueAt(table.getSelectedRow(), 7)));
 
-                    final JComponent[] inputs = new JComponent[]{
-                            new JLabel(COLUMNS[1]),
-                            guestName,
-                            new JLabel(COLUMNS[2]),
-                            contact,
-                            new JLabel(COLUMNS[3]),
-                            room,
-                            new JLabel(COLUMNS[4]),
-                            checkIn,
-                            new JLabel(COLUMNS[5]),
-                            checkOut,
-                            new JLabel(COLUMNS[6]),
-                            emailId,
-                            new JLabel(COLUMNS[7]),
-                            sumGuests
-                    };
-                    guestName.setText(guestNameValue);
-                    contact.setText(guestNoValue);
-                    room.setSelectedItem(roomValue);
-                    checkIn.setText(checkInValue);
-                    checkOut.setText(checkOutValue);
-                    emailId.setText(emailIdValue);
-                    sumGuests.setText(sumGuestsValue.toString());
+                    drawEditeForm(selectedPeople);
 
-                    Validator validator = new Validator();
-                    PeopleInfo people = new PeopleInfo();
-                    while (validator == null || !validator.isGood()) {
-                        int result = JOptionPane.showConfirmDialog(HotelBookingSystem.this, inputs, "Update dialog", JOptionPane.PLAIN_MESSAGE);
-                        if (result == JOptionPane.OK_OPTION) {
-
-                            people.setGuestName(guestName.getText());
-                            people.setContactNo(contact.getText());
-                            people.setRoom((String) (room.getSelectedItem()));
-                            people.setCheckIn(checkIn.getText());
-                            people.setCheckOut(checkOut.getText());
-                            people.setEmailID(emailId.getText());
-                            people.setSumGuests(Integer.parseInt(sumGuests.getText()));
-                            people.setGuestId(guestIdValue);
-
-                            validator = Validator.validate(people, COLUMNS);
-                            if (validator.getEmptyFields().size()>0){
-                                if (validator.getEmptyFields().contains(COLUMNS[1])){
-                                    guestName.setBackground(Color.ORANGE);
-                                }
-                                else guestName.setBackground(Color.white);
-                                if (validator.getEmptyFields().contains(COLUMNS[2])){
-                                    contact.setBackground(Color.ORANGE);
-                                }
-                                else contact.setBackground(Color.white);
-                                if (validator.getEmptyFields().contains(COLUMNS[6])){
-                                    emailId.setBackground(Color.ORANGE);
-                                }
-                                else emailId.setBackground(Color.white);
-                                if (validator.getEmptyFields().contains(COLUMNS[7])){
-                                    sumGuests.setBackground(Color.ORANGE);
-                                }
-                                else sumGuests.setBackground(Color.white);
-                                JOptionPane.showMessageDialog(HotelBookingSystem.this, validator.getMessage(), "Fields check", JOptionPane.WARNING_MESSAGE);
-                            }
-                            DBRep.update(people);
-
-                        } else {
-                            System.out.println("User canceled / closed the dialog, result = " + result);
-                        }
-                    }
-                    refreshData();
                 } else {
                     JOptionPane.showMessageDialog(HotelBookingSystem.this, "Item not selected", "Selected item", JOptionPane.INFORMATION_MESSAGE);
                 }
@@ -252,6 +137,90 @@ class HotelBookingSystem extends JFrame {
             model.addRow(items);
         }
         return model;
+    }
+
+    private void drawEditeForm(PeopleInfo peopleOld) {
+
+        JTextField guestName = new JTextField();
+        JTextField contact = new JTextField();
+        JComboBox room = new JComboBox<>(ROOMS);
+        JTextField checkIn = new JTextField();
+        JTextField checkOut = new JTextField();
+        JTextField emailId = new JTextField();
+        JTextField sumGuests = new JTextField();
+
+        final JComponent[] inputs = new JComponent[]{
+                new JLabel(COLUMNS[1]),
+                guestName,
+                new JLabel(COLUMNS[2]),
+                contact,
+                new JLabel(COLUMNS[3]),
+                room,
+                new JLabel(COLUMNS[4]),
+                checkIn,
+                new JLabel(COLUMNS[5]),
+                checkOut,
+                new JLabel(COLUMNS[6]),
+                emailId,
+                new JLabel(COLUMNS[7]),
+                sumGuests
+        };
+
+        guestName.setText(peopleOld.getGuestName());
+        contact.setText(peopleOld.getContactNo());
+        room.setSelectedItem(peopleOld.getRoom());
+        checkIn.setText(peopleOld.getCheckIn());
+        checkOut.setText(peopleOld.getCheckOut());
+        emailId.setText(peopleOld.getEmailID());
+        if (peopleOld.getSumGuests() != null) {
+            sumGuests.setText(peopleOld.getSumGuests().toString());
+        }
+        Validator validator = new Validator();
+
+        while (validator == null || !validator.isGood()) {
+            int result = JOptionPane.showConfirmDialog(HotelBookingSystem.this, inputs, "Update dialog", JOptionPane.PLAIN_MESSAGE);
+            if (result == JOptionPane.CLOSED_OPTION) {
+                break;
+            }
+            if (result == JOptionPane.OK_OPTION) {
+
+                peopleOld.setGuestName(guestName.getText());
+                peopleOld.setContactNo(contact.getText());
+                peopleOld.setRoom((String) (room.getSelectedItem()));
+                peopleOld.setCheckIn(checkIn.getText());
+                peopleOld.setCheckOut(checkOut.getText());
+                peopleOld.setEmailID(emailId.getText());
+                peopleOld.setSumGuests(Integer.parseInt(sumGuests.getText()));
+
+                validator = Validator.validate(peopleOld, COLUMNS);
+                if (validator.getBrokenFields().size() > 0) {
+                    if (validator.getBrokenFields().contains(COLUMNS[1])) {
+                        guestName.setBackground(Color.ORANGE);
+                    } else guestName.setBackground(Color.white);
+                    if (validator.getBrokenFields().contains(COLUMNS[2])) {
+                        contact.setBackground(Color.ORANGE);
+                    } else contact.setBackground(Color.white);
+                    if (validator.getBrokenFields().contains(COLUMNS[6])) {
+                        emailId.setBackground(Color.ORANGE);
+                    } else emailId.setBackground(Color.white);
+                    if (validator.getBrokenFields().contains(COLUMNS[7])) {
+                        sumGuests.setBackground(Color.ORANGE);
+                    } else sumGuests.setBackground(Color.white);
+                    JOptionPane.showMessageDialog(HotelBookingSystem.this, validator.getMessage(), "Fields check", JOptionPane.WARNING_MESSAGE);
+                }
+                if (validator.isGood()) {
+                    if (peopleOld.getId() != null) {
+                        DBRep.update(peopleOld);
+                    } else {
+                        DBRep.insert(peopleOld);
+                    }
+                }
+
+            } else {
+                System.out.println("User canceled / closed the dialog, result = " + result);
+            }
+        }
+        refreshData();
     }
 
 }
