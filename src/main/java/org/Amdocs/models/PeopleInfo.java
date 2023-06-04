@@ -1,10 +1,11 @@
 package org.Amdocs.models;
 
 public class PeopleInfo {
+    public final static String[] ROOMS = {"Simple", "Deluxe", "SuperDeluxe"};
     private Integer id;
     private String guestName;
     private String contactNo;
-    private String room="Simple";
+    private String room=ROOMS[0];
     private String checkIn;
     private String checkOut;
     private String emailID;

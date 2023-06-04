@@ -66,7 +66,7 @@ public class Validator {
         }
         if (people.getSumGuests() == null || people.getSumGuests() < 1 ){
             validator.isGood=false;
-            message.append("SumGuests field must be > 0. \n");
+            message.append("SumGuests field must be integer and > 0. \n");
             validator.brokenFields.add(columnsName[7]);
         }
         if (validator.brokenFields.size() > 0){

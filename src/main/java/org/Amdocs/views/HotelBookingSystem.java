@@ -19,7 +19,6 @@ public class HotelBookingSystem extends JFrame {
     private JTable table;
     private Box contents = new Box(BoxLayout.Y_AXIS);
     private final static String[] COLUMNS = {"ID", "GuestName", "ContactNo", "Room", "Check_in", "Check_out", "EMailID", "SumGuests"};
-    private final static String[] ROOMS = {"Simple", "Deluxe", "SuperDeluxe"};
 
     public HotelBookingSystem() {
         DBRep.getConnection();
@@ -145,7 +144,7 @@ public class HotelBookingSystem extends JFrame {
 
         JTextField guestName = new JTextField();
         JTextField contact = new JTextField();
-        JComboBox room = new JComboBox<>(ROOMS);
+        JComboBox room = new JComboBox<>(PeopleInfo.ROOMS);
         JTextField checkIn = new JTextField();
         JTextField checkOut = new JTextField();
         JTextField emailId = new JTextField();
@@ -192,7 +191,11 @@ public class HotelBookingSystem extends JFrame {
                 peopleOld.setCheckIn(checkIn.getText());
                 peopleOld.setCheckOut(checkOut.getText());
                 peopleOld.setEmailID(emailId.getText());
-                peopleOld.setSumGuests(Integer.parseInt(sumGuests.getText()));
+                try {
+                    peopleOld.setSumGuests(Integer.parseInt(sumGuests.getText()));
+                } catch (Exception ex) {
+                    peopleOld.setSumGuests(0);
+                }
 
                 validator = Validator.validate(peopleOld, COLUMNS);
                 if (validator.getBrokenFields().size() > 0) {
