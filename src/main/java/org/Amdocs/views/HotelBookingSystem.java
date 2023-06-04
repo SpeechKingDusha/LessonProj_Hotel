@@ -205,6 +205,12 @@ public class HotelBookingSystem extends JFrame {
                     if (validator.getBrokenFields().contains(COLUMNS[2])) {
                         contact.setBackground(Color.ORANGE);
                     } else contact.setBackground(Color.white);
+                    if (validator.getBrokenFields().contains(COLUMNS[4])) {
+                        checkIn.setBackground(Color.ORANGE);
+                    } else checkIn.setBackground(Color.white);
+                    if (validator.getBrokenFields().contains(COLUMNS[5])) {
+                        checkOut.setBackground(Color.ORANGE);
+                    } else checkOut.setBackground(Color.white);
                     if (validator.getBrokenFields().contains(COLUMNS[6])) {
                         emailId.setBackground(Color.ORANGE);
                     } else emailId.setBackground(Color.white);
