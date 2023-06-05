@@ -55,6 +55,7 @@ public class Validator {
         validator.brokenFields = new ArrayList<>();
         StringBuilder message = new StringBuilder();
         validator.isGood = true;
+
         if (people.getGuestName().isEmpty()) {
             validator.isGood = false;
             validator.brokenFields.add(columnsName[1]);
@@ -70,7 +71,6 @@ public class Validator {
         if (!validateDate(people.getCheckIn())) {
             validator.isGood = false;
             validator.brokenFields.add(columnsName[4]);
-            //message.append("CheckIn is incorrect format. (DD:MM:YYYY) \n");
             message.append(messErrorOfValid.get(ColumnsEnum.CHECK_IN));
         }
         if (!validateDate(people.getCheckOut())) {
