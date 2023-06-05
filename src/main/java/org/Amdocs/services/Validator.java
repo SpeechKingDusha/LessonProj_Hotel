@@ -10,7 +10,7 @@ public class Validator {
 
     private static final String REGEXPHONENUMBER = "^((8|\\+7)[\\- ]?)?(\\(?\\d{3}\\)?[\\- ]?)?[\\d\\- ]{7}$";
     private static final String REGEXEMAIL = "\\A[^@]+@([^@\\.]+\\.)+[^@\\.]+\\z";
-    private static final String REGEXDATE = "(0?[1-9]|[12][0-9]|3[01]):(0?[1-9]|1[012]):((19|20)\\d\\d)";
+    private static final String REGEXDATE = "(0?[1-9]|[12][0-9]|3[01])-(0?[1-9]|1[012])-((19|20)\\d\\d)";
     private static final Map<ColumnsEnum, String> messErrorOfValid = new HashMap<>();
 
     static {

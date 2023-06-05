@@ -6,8 +6,8 @@ public class PeopleInfo {
     private String guestName;
     private String contactNo;
     private String room = ROOMS[0];
-    private String checkIn = "DD:MM:YYYY";
-    private String checkOut = "DD:MM:YYYY";
+    private String checkIn = "DD-MM-YYYY";
+    private String checkOut = "DD-MM-YYYY";
     private String emailID;
     private Integer sumGuests = 1;
 
